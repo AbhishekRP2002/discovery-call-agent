@@ -10,6 +10,7 @@ from livekit.agents import (
     llm,
     metrics,
 )
+from livekit.agents import llm  # noqa
 from livekit.agents.pipeline import VoicePipelineAgent
 from livekit.plugins import (
     cartesia,
@@ -20,6 +21,8 @@ from livekit.plugins import (
 )
 from livekit.plugins.openai import LLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT
+from pydantic import BaseModel
+from typing import List, Optional
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("voice-agent")
@@ -38,11 +41,35 @@ def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
 
 
+class ProspectContactInfo(BaseModel):
+    first_name: str
+    last_name: Optional[str]
+    email: str
+    phone: Optional[str]
+    company_name: Optional[str]
+    company_domain: str
+    job_title: Optional[str]
+    linkedin: Optional[str]
+
+
+class ProspectAccountInfo(BaseModel):
+    company_name: str
+    company_domain: str
+    company_summary: Optional[str]
+    industry: Optional[str]
+    pain_points: Optional[List[str]]
+
+
+def get_initial_user_prompt():
+    pass
+
+
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext().append(
         role="system",
         text=VOICE_AGENT_SYSTEM_PROMPT,
     )
+    initial_ctx.append(role="user", text=get_initial_user_prompt())
 
     logger.info(f"connecting to room {ctx.room.name}")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
@@ -52,7 +79,7 @@ async def entrypoint(ctx: JobContext):
     logger.info(f"starting voice assistant for participant {participant.identity}")
 
     # This project is configured to use Deepgram STT, OpenAI LLM and Cartesia TTS plugins
-    # Other great providers exist like Cerebras, ElevenLabs, Groq, Play.ht, Rime, and more
+    # Other great providers exist like Cerebras, ElevenLabs, Groq, Play.ht, Rime, and more can be used also.
     # Learn more and pick the best one for your app:
     # https://docs.livekit.io/agents/plugins
     agent = VoicePipelineAgent(
@@ -80,6 +107,11 @@ async def entrypoint(ctx: JobContext):
         metrics.log_metrics(agent_metrics)
         usage_collector.collect(agent_metrics)
 
+    async def log_usage():
+        summary = usage_collector.get_summary()
+        logger.info(f"Usage: {summary}")
+
+    # Start the assistant. This will automatically publish a microphone track and listen to the participant.
     agent.start(ctx.room, participant)
 
 
