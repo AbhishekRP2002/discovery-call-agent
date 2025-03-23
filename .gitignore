@@ -175,3 +175,6 @@ cython_debug/
 
 
 discovery-call-agent/
+
+KMS/
+.env.local

@@ -14,6 +14,14 @@ livekit-api = "^0.8.2"
 langchain = "^0.3.21"
 python-dotenv = "^1.0.1"
 fastapi = "^0.115.11"
+livekit-plugins-noise-cancellation = "^0.2.1"
+livekit-plugins-openai = "^0.12.0"
+livekit-plugins-cartesia = "^0.4.11"
+livekit-plugins-deepgram = "^0.7.1"
+livekit-plugins-silero = "^0.7.5"
+livekit-agents = "^0.12.18"
+livekit-plugins-turn-detector = "^0.4.3"
+livekit-plugins-assemblyai = "^0.2.3"
 
 
 [build-system]
