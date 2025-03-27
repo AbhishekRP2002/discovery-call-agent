@@ -5,8 +5,13 @@ conversational voice agent:
 - personalized intro message:
   - use the form input to craft a personalised welcome message
 
-
-
-pass the prospect information, prospect company info, 
+pass the prospect information, prospect company info,
 
 seller company info.
+
+
+Issues / improvement scope:
+
+- TTS model reading the markdown representation characters in middle of conversation like (**Regeneration** as `asterisks asterisks regeneration asterisks asterisks`  )
+- voice is robotic, taking pauses in between, flow is not smooth
+- greetings, redirecting to seller company information.
