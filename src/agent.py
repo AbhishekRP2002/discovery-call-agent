@@ -21,8 +21,6 @@ from livekit.plugins import (
 )
 from livekit.plugins.openai import LLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT
-from pydantic import BaseModel
-from typing import List, Optional
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("voice-agent")
@@ -41,35 +39,11 @@ def prewarm(proc: JobProcess):
     proc.userdata["vad"] = silero.VAD.load()
 
 
-class ProspectContactInfo(BaseModel):
-    first_name: str
-    last_name: Optional[str]
-    email: str
-    phone: Optional[str]
-    company_name: Optional[str]
-    company_domain: str
-    job_title: Optional[str]
-    linkedin: Optional[str]
-
-
-class ProspectAccountInfo(BaseModel):
-    company_name: str
-    company_domain: str
-    company_summary: Optional[str]
-    industry: Optional[str]
-    pain_points: Optional[List[str]]
-
-
-def get_initial_user_prompt():
-    pass
-
-
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext().append(
         role="system",
         text=VOICE_AGENT_SYSTEM_PROMPT,
     )
-    initial_ctx.append(role="user", text=get_initial_user_prompt())
 
     logger.info(f"connecting to room {ctx.room.name}")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
