@@ -15,3 +15,5 @@ Issues / improvement scope:
 - TTS model reading the markdown representation characters in middle of conversation like (**Regeneration** as `asterisks asterisks regeneration asterisks asterisks`  )
 - voice is robotic, taking pauses in between, flow is not smooth
 - greetings, redirecting to seller company information.
+
+`< migrate from work email to personal email >`
