@@ -12,10 +12,13 @@ from livekit.plugins import (
     turn_detector,
 )
 from livekit.plugins.openai import LLM
+from typing import Literal
+
+# from livekit.plugins.google import LLM as GeminiLLM  # noqa
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 
 load_dotenv(dotenv_path=".env.local")
-logger = logging.getLogger("voice-agent")
+logger = logging.getLogger("marklinea-voice-agent")
 
 
 azure_llm = LLM.with_azure(
@@ -26,13 +29,21 @@ azure_llm = LLM.with_azure(
     api_version="2024-12-01-preview",
 )
 
+gemini_llm = LLM(
+    model="gemini-2.0-flash-001",
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+)
+
 
 class DiscoveryCallAgent(Agent):
     def __init__(self):
         super().__init__(instructions=VOICE_AGENT_SYSTEM_PROMPT_2)
 
 
-async def entrypoint(ctx: agents.JobContext):
+async def entrypoint(
+    ctx: agents.JobContext, llm_service: Literal["azure-openai", "gemini"]
+):
     logger.info(f"connecting to room {ctx.room.name}")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
@@ -40,7 +51,7 @@ async def entrypoint(ctx: agents.JobContext):
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
         # stt=assemblyai.STT(),
-        llm=azure_llm,
+        llm=azure_llm if llm_service == "azure-openai" else gemini_llm,
         tts=cartesia.TTS(),
         # use LiveKit's transformer-based turn detector
         turn_detection=turn_detector.EOUModel(),
@@ -65,4 +76,8 @@ async def entrypoint(ctx: agents.JobContext):
 
 
 if __name__ == "__main__":
-    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
+    agents.cli.run_app(
+        agents.WorkerOptions(
+            entrypoint_fnc=lambda ctx: entrypoint(ctx, llm_service="azure-openai")
+        )
+    )

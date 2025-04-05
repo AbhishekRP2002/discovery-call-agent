@@ -19,3 +19,11 @@ class ProspectAccountInfo(BaseModel):
     company_summary: Optional[str]
     industry: Optional[str]
     pain_points: Optional[List[str]]
+
+
+class SellerAccountInfo(BaseModel):
+    company_name: str
+    company_domain: str
+    company_summary: Optional[str]
+    industry: Optional[str]
+    pain_points: Optional[List[str]]
