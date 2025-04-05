@@ -1,17 +1,9 @@
 import logging
 import os
+from livekit import agents
 from dotenv import load_dotenv
-from livekit.agents import (
-    AutoSubscribe,
-    JobContext,
-    JobProcess,
-    WorkerOptions,
-    cli,
-    llm,
-    metrics,
-)
-from livekit.agents import llm  # noqa
-from livekit.agents.pipeline import VoicePipelineAgent
+from livekit.agents.voice import AgentSession, Agent, room_io
+from livekit.agents.job import AutoSubscribe
 from livekit.plugins import (
     cartesia,
     deepgram,
@@ -20,7 +12,7 @@ from livekit.plugins import (
     turn_detector,
 )
 from livekit.plugins.openai import LLM
-from prompts import VOICE_AGENT_SYSTEM_PROMPT
+from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("voice-agent")
@@ -35,64 +27,42 @@ azure_llm = LLM.with_azure(
 )
 
 
-def prewarm(proc: JobProcess):
-    proc.userdata["vad"] = silero.VAD.load()
+class DiscoveryCallAgent(Agent):
+    def __init__(self):
+        super().__init__(instructions=VOICE_AGENT_SYSTEM_PROMPT_2)
 
 
-async def entrypoint(ctx: JobContext):
-    initial_ctx = llm.ChatContext().append(
-        role="system",
-        text=VOICE_AGENT_SYSTEM_PROMPT,
-    )
-
+async def entrypoint(ctx: agents.JobContext):
     logger.info(f"connecting to room {ctx.room.name}")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
-    # Wait for the first participant to connect
-    participant = await ctx.wait_for_participant()
-    logger.info(f"starting voice assistant for participant {participant.identity}")
-
-    # This project is configured to use Deepgram STT, OpenAI LLM and Cartesia TTS plugins
-    # Other great providers exist like Cerebras, ElevenLabs, Groq, Play.ht, Rime, and more can be used also.
-    # Learn more and pick the best one for your app:
-    # https://docs.livekit.io/agents/plugins
-    agent = VoicePipelineAgent(
-        vad=ctx.proc.userdata["vad"],
+    session = AgentSession(
+        vad=silero.VAD.load(),
         stt=deepgram.STT(),
         # stt=assemblyai.STT(),
         llm=azure_llm,
         tts=cartesia.TTS(),
         # use LiveKit's transformer-based turn detector
-        turn_detector=turn_detector.EOUModel(),
+        turn_detection=turn_detector.EOUModel(),
         # minimum delay for endpointing, used when turn detector believes the user is done with their turn
         min_endpointing_delay=0.5,
         # maximum delay for endpointing, used when turn detector does not believe the user is done with their turn
         max_endpointing_delay=5.0,
-        # enable background voice & noise cancellation, powered by Krisp
-        # included at no additional cost with LiveKit Cloud
-        noise_cancellation=noise_cancellation.BVC(),
-        chat_ctx=initial_ctx,
     )
 
-    usage_collector = metrics.UsageCollector()
+    await session.start(
+        room=ctx.room,
+        agent=DiscoveryCallAgent(),
+        room_input_options=room_io.RoomInputOptions(
+            # enable background voice & noise cancellation, powered by Krisp
+            # included at no additional cost with LiveKit Cloud
+            noise_cancellation=noise_cancellation.BVC(),
+        ),
+    )
 
-    @agent.on("metrics_collected")
-    def on_metrics_collected(agent_metrics: metrics.AgentMetrics):
-        metrics.log_metrics(agent_metrics)
-        usage_collector.collect(agent_metrics)
-
-    async def log_usage():
-        summary = usage_collector.get_summary()
-        logger.info(f"Usage: {summary}")
-
-    # Start the assistant. This will automatically publish a microphone track and listen to the participant.
-    agent.start(ctx.room, participant)
+    # Instruct the agent to speak first
+    await session.generate_reply()
 
 
 if __name__ == "__main__":
-    cli.run_app(
-        WorkerOptions(
-            entrypoint_fnc=entrypoint,
-            prewarm_fnc=prewarm,
-        ),
-    )
+    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))

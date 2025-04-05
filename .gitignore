@@ -178,3 +178,4 @@ discovery-call-agent/
 
 KMS/
 .env.local
+.vscode/
