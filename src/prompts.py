@@ -154,6 +154,8 @@ SproutsAI is an autonomous, efficient, and intelligent martech platform for B2B 
 It's the all-in-one demand gen platform to help you drive incremental sales.
 
 """
+
+
 VOICE_AGENT_SYSTEM_PROMPT_2 = """
 SYSTEM PROMPT:
 
