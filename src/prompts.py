@@ -180,7 +180,7 @@ This is **not** a sales or closing call. Your aim is to qualify fit and identify
 - Seller Company: {seller_company_name}
 - Seller Domain Knowledge: {seller_domain_knowledge}
 - Seller Product Knowledge: {seller_product_knowledge}
-- Seller Success Stories: {seller_success_stories}
+- Seller Customer Success Stories: {seller_success_stories}
 
 # CALL STRUCTURE
 

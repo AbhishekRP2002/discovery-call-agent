@@ -17,6 +17,8 @@ from typing import Literal
 from livekit.plugins.google import LLM as GeminiLLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
+from datetime import datetime
+import json
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-voice-agent")
@@ -59,6 +61,30 @@ def get_prospect_data(user_email: str):
 
 
 def get_seller_data():
+    return {
+        "seller_company_name": "Apollo.io",
+        "seller_domain_knowledge": """
+        1. Lead Generation & Prospecting – Finding and attracting potential customers who might be interested in your SaaS product.
+        2. Creating an Ideal Customer Profile (ICP) – Defining the characteristics of the perfect customer to target marketing efforts efficiently.
+        3. Content Marketing & SEO – Creating valuable content and optimizing for search engines to attract inbound leads.
+        4. Paid Advertising & Demand Generation – Running targeted ads and campaigns to generate awareness and demand for the product.
+        5. Email & Outreach Campaigns – Engaging potential customers with personalized emails, social outreach, and automated messaging.
+        6. Lead Scoring & Nurturing – Ranking and engaging leads based on their likelihood to convert into paying customers.
+        7. Sales & Marketing Alignment – Ensuring marketing efforts support sales teams with the right leads and messaging.
+        8. Analytics & Performance Tracking – Measuring marketing efforts to optimize strategies and improve ROI.
+        """,
+        "seller_product_knowledge": """
+        - Comprehensive B2B Database: Access to over 210 million contacts across 35 million companies, enabling precise targeting of potential customers. 
+        - Sales Engagement Tools: Features like automated email sequencing, integrated calling, and task management streamline outreach efforts. 
+        - AI-Powered Insights: Utilizes artificial intelligence to provide lead scoring, buyer intent data, and predictive analytics, helping prioritize high-potential prospects.
+        - CRM Integrations: Seamlessly connects with popular CRM platforms, ensuring data consistency and enhancing workflow efficiency.
+        """,
+        "seller_success_stories": """
+        - Cyera: By implementing Apollo.io, Cyera's BDR Leader, Andrew Froning, revamped their sales process, achieving a 75% increase in booked meetings with 50% less effort.
+        - Paraform: Co-founder John Kim leveraged Apollo.io to scale outbound efforts, securing the company's first 100 customers and facilitating their seed funding round.
+        - Predictable Revenue: CEO Collin Stewart transitioned to Apollo.io as an all-in-one platform, resulting in a 50% reduction in costs, doubled email open rates, and halved time to meetings.
+        """,
+    }
     pass
 
 
@@ -78,6 +104,17 @@ async def entrypoint(
     llm_service: Literal["azure-openai", "gemini"],
 ):
     logger.info(f"connecting to room {ctx.room.name}")
+
+    async def write_transcript():
+        curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        file_name = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}.json"
+        with open(file_name, "w") as f:
+            json.dump(session.history.to_dict(), f, indent=4)
+
+        logger.info(f"Transcript for room {ctx.room.name} saved to {file_name}")
+
+    ctx.add_shutdown_callback(write_transcript)
+
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
     system_prompt = format_sys_prompt_template(
