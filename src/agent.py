@@ -111,7 +111,9 @@ async def entrypoint(
     )
 
     # Instruct the agent to speak first
-    await session.generate_reply()
+    await session.generate_reply(
+        "greet the user with his first name (if available) and use the ACE method for kicking off the discovery call"
+    )
 
 
 if __name__ == "__main__":
