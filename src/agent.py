@@ -14,8 +14,9 @@ from livekit.plugins import (
 from livekit.plugins.openai import LLM
 from typing import Literal
 
-# from livekit.plugins.google import LLM as GeminiLLM  # noqa
+from livekit.plugins.google import LLM as GeminiLLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
+from pydantic import BaseModel, Field
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-voice-agent")
@@ -29,23 +30,61 @@ azure_llm = LLM.with_azure(
     api_version="2024-12-01-preview",
 )
 
-gemini_llm = LLM(
+gemini_llm = GeminiLLM(
     model="gemini-2.0-flash-001",
     api_key=os.getenv("GEMINI_API_KEY"),
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    # base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    temperature=0.2,
+    tool_choice="auto",
 )
 
 
+class UserInfo(BaseModel):
+    user_first_name: str = Field(
+        ...,
+        description="The user's first name",
+    )
+    user_last_name: str = Field(
+        ...,
+        description="The user's last name",
+    )
+    user_email: str = Field(
+        ...,
+        description="The user's email",
+    )
+
+
+def get_prospect_data(user_email: str):
+    pass
+
+
+def get_seller_data():
+    pass
+
+
+def format_sys_prompt_template(system_prompt, prospect_data, seller_data):
+    pass
+
+
 class DiscoveryCallAgent(Agent):
-    def __init__(self):
-        super().__init__(instructions=VOICE_AGENT_SYSTEM_PROMPT_2)
+    def __init__(self, system_prompt: str = None):
+        super().__init__(instructions=system_prompt)
 
 
 async def entrypoint(
-    ctx: agents.JobContext, llm_service: Literal["azure-openai", "gemini"]
+    ctx: agents.JobContext,
+    prospect_data: dict,
+    seller_data: dict,
+    llm_service: Literal["azure-openai", "gemini"],
 ):
     logger.info(f"connecting to room {ctx.room.name}")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+
+    system_prompt = format_sys_prompt_template(
+        VOICE_AGENT_SYSTEM_PROMPT_2,
+        prospect_data=prospect_data,
+        seller_data=seller_data,
+    )
 
     session = AgentSession(
         vad=silero.VAD.load(),
@@ -63,7 +102,7 @@ async def entrypoint(
 
     await session.start(
         room=ctx.room,
-        agent=DiscoveryCallAgent(),
+        agent=DiscoveryCallAgent(system_prompt=system_prompt),
         room_input_options=room_io.RoomInputOptions(
             # enable background voice & noise cancellation, powered by Krisp
             # included at no additional cost with LiveKit Cloud
@@ -76,8 +115,23 @@ async def entrypoint(
 
 
 if __name__ == "__main__":
+    print("Enter your first name:")
+    user_first_name = input()
+    print("Enter your last name:")
+    user_last_name = input()
+    print("Enter your email:")
+    user_email = input()
+    user_info = UserInfo(
+        user_first_name=user_first_name,
+        user_last_name=user_last_name,
+        user_email=user_email,
+    )
+    prospect_data = get_prospect_data(user_email)
+    seller_data = get_seller_data()
     agents.cli.run_app(
         agents.WorkerOptions(
-            entrypoint_fnc=lambda ctx: entrypoint(ctx, llm_service="azure-openai")
+            entrypoint_fnc=lambda ctx: entrypoint(
+                ctx, prospect_data, seller_data, llm_service="azure-openai"
+            ),
         )
     )
