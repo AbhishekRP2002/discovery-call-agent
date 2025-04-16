@@ -17,3 +17,18 @@ Issues / improvement scope:
 - greetings, redirecting to seller company information.
 
 `< migrate from work email to personal email >`
+
+Notes from other blog posts on building effective voice agents:
+- voice-voice native llms abstract the 3 step process, leading to sacrifice in observability and control, although the response may come out more naturally
+- stream LLM outputs to the TTS engine as they're generated.
+  - cons with this approach:
+    - implementation of guardrails is challenging, can only implement before or during the generation not after
+    - no scope for post-processing of the llm response
+  - pros:
+    - less latency
+    - more natural sounding voice
+- Avoid unnecessary token bloat with intelligent tool arguments (for example, not passing data in prompts if it can be fetched via backend)
+- consider voice cloning if planning to use fallback across different TTS service providers, single voice to be used for consistency
+- design-time optimization:
+  - Reduced the number of tool-invoking steps in prompts
+- implement dynamic prompt injection and real-time data integration support

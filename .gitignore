@@ -179,3 +179,4 @@ discovery-call-agent/
 KMS/
 .env.local
 .vscode/
+.DS_Store
