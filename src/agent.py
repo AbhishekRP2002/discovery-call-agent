@@ -19,6 +19,7 @@ from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
+import pandas as pd
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-voice-agent")
@@ -56,8 +57,14 @@ class UserInfo(BaseModel):
     )
 
 
-def get_prospect_data(user_email: str):
-    pass
+def get_prospect_data(user_info: UserInfo):
+    # TODO: add error handling
+    user_email = user_info.user_email
+    df = pd.read_csv("data/contacts_dump.csv")
+    prospect = df[df["Email"] == user_email].to_dict(orient="records")
+    if not prospect:
+        raise ValueError(f"No prospect found with email {user_email}")
+    return prospect[0]
 
 
 def get_seller_data():
@@ -85,11 +92,28 @@ def get_seller_data():
         - Predictable Revenue: CEO Collin Stewart transitioned to Apollo.io as an all-in-one platform, resulting in a 50% reduction in costs, doubled email open rates, and halved time to meetings.
         """,
     }
-    pass
 
 
-def format_sys_prompt_template(system_prompt, prospect_data, seller_data):
-    pass
+def format_sys_prompt_template(
+    system_prompt, prospect_data, seller_data, scheduled_duration=30
+):
+    current_date_time = datetime.now().strftime("%Y-%m-%d")
+
+    updated_system_prompt = system_prompt.format(
+        seller_company_name=seller_data["seller_company_name"],
+        seller_domain_knowledge=seller_data["seller_domain_knowledge"],
+        seller_product_knowledge=seller_data["seller_product_knowledge"],
+        seller_success_stories=seller_data["seller_success_stories"],
+        scheduled_duration=scheduled_duration,
+        current_date_time=current_date_time,
+        prospect_name=prospect_data["Full Name"],
+        prospect_company_name=prospect_data["Account Name"],
+        prospect_role=prospect_data["Job Title"],
+        prospect_linkedin_url=prospect_data["Contact LinkedIn URL"],
+        prospect_company_description=prospect_data["Company Description"],
+        prospect_recent_news=prospect_data["Company News"],
+    )
+    return updated_system_prompt
 
 
 class DiscoveryCallAgent(Agent):
@@ -165,12 +189,12 @@ if __name__ == "__main__":
         user_last_name=user_last_name,
         user_email=user_email,
     )
-    prospect_data = get_prospect_data(user_email)
+    prospect_data = get_prospect_data(user_info)
     seller_data = get_seller_data()
     agents.cli.run_app(
         agents.WorkerOptions(
             entrypoint_fnc=lambda ctx: entrypoint(
-                ctx, prospect_data, seller_data, llm_service="azure-openai"
+                ctx, prospect_data, seller_data, llm_service="gemini"
             ),
         )
     )

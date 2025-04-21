@@ -9,13 +9,15 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.13"
 pip = "^25.0.1"
-livekit = "^1.0.1"
-livekit-api = "^0.8.2"
-langchain = "^0.3.21"
-python-dotenv = "^1.0.1"
-fastapi = "^0.115.11"
+pandas = "^2.2.3"
+livekit = "^1.0.6"
+livekit-api = "^1.0.2"
+langchain = "^0.3.23"
+langgraph = "^0.3.31"
+google-genai = "^1.11.0"
+livekit-agents = {version = ">=1.0,<2.0", extras = ["assemblyai", "cartesia", "deepgram", "google", "openai", "silero", "turn-detector"]}
 livekit-plugins-noise-cancellation = "^0.2.1"
-livekit-agents = {version = ">=1.0rc,<2.0", extras = ["assemblyai", "cartesia", "deepgram", "google", "openai", "silero", "turn-detector"]}
+python-dotenv = "^1.1.0"
 
 
 [build-system]
