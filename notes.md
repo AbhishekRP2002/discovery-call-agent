@@ -32,3 +32,8 @@ Notes from other blog posts on building effective voice agents:
 - design-time optimization:
   - Reduced the number of tool-invoking steps in prompts
 - implement dynamic prompt injection and real-time data integration support
+
+- ** coming the response . TTS conversation
+- company registered name is used, directly like "broadcom Inc" instead of "broadcom", have t apply some filtering / input account name
+  sanitization
+  - close the room after the end of the conversation.

@@ -9,8 +9,8 @@ from livekit.plugins import (
     deepgram,
     noise_cancellation,
     silero,
-    turn_detector,
 )
+from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins.openai import LLM
 from typing import Literal
 
@@ -154,7 +154,7 @@ async def entrypoint(
         llm=azure_llm if llm_service == "azure-openai" else gemini_llm,
         tts=cartesia.TTS(),
         # use LiveKit's transformer-based turn detector
-        turn_detection=turn_detector.EOUModel(),
+        turn_detection=EnglishModel(),
         # minimum delay for endpointing, used when turn detector believes the user is done with their turn
         min_endpointing_delay=0.5,
         # maximum delay for endpointing, used when turn detector does not believe the user is done with their turn
@@ -173,7 +173,9 @@ async def entrypoint(
 
     # Instruct the agent to speak first
     await session.generate_reply(
-        "greet the user with his first name (if available) and use the ACE method for kicking off the discovery call"
+        instructions="greet the user with his/her first name : {}".format(
+            prospect_data["Full Name"]
+        )
     )
 
 
