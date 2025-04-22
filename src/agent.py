@@ -14,6 +14,7 @@ from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins.openai import LLM
 from typing import Literal
 from livekit.plugins import google as google_livekit  # noqa
+from livekit.agents import metrics, MetricsCollectedEvent
 from livekit.plugins.google import LLM as GeminiLLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
@@ -23,7 +24,13 @@ import pandas as pd
 import google
 
 load_dotenv(dotenv_path=".env.local")
-logger = logging.getLogger("marklinea-voice-agent")
+logger = logging.getLogger("marklinea-discovery-call-voice-agent")
+
+metrics_logger = logging.getLogger("metrics")
+metrics_logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler("discovery-call-agent-metrics.log", mode="a")
+file_handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+metrics_logger.addHandler(file_handler)
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -168,6 +175,18 @@ async def entrypoint(
         # maximum delay for endpointing, used when turn detector does not believe the user is done with their turn
         max_endpointing_delay=5.0,
     )
+
+    usage_collector = metrics.UsageCollector()
+
+    @session.on("metrics_collected")
+    def _on_metrics_collected(ev: MetricsCollectedEvent):
+        usage_collector.collect(ev.metrics)
+
+    async def log_usage():
+        summary = usage_collector.get_summary()
+        metrics_logger.info(f"Room name: {ctx.room.name} \n Usage Summary: {summary}")
+
+    ctx.add_shutdown_callback(log_usage)
 
     await session.start(
         room=ctx.room,

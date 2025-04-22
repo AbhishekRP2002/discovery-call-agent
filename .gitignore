@@ -182,3 +182,4 @@ KMS/
 .DS_Store
 
 src/gcp_creds.json
+conv_history/
