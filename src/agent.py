@@ -27,7 +27,7 @@ logger = logging.getLogger("marklinea-voice-agent")
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CREDS_PATH = os.path.join(SCRIPT_DIR, "gc_creds.json")
+CREDS_PATH = os.path.join(SCRIPT_DIR, "gcp_creds.json")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDS_PATH
 credentials, project_id = google.auth.default(quota_project_id="mlsprouts")
 os.environ["GOOGLE_CLOUD_PROJECT"] = "mlsprouts"

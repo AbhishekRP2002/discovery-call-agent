@@ -180,3 +180,5 @@ KMS/
 .env.local
 .vscode/
 .DS_Store
+
+src/gcp_creds.json
