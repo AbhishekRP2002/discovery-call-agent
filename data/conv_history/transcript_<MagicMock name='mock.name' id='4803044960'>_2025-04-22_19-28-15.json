@@ -1,0 +1,13 @@
+{
+    "items": [
+        {
+            "id": "item_6c69f2eb4715",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Hello there! I'm Chloe, an intelligent AI Agent representing Apollo.io. It's great to connect with you today. How are you doing?"
+            ],
+            "interrupted": false
+        }
+    ]
+}

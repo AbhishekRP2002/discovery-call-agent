@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from livekit.agents.voice import AgentSession, Agent, room_io
 from livekit.agents.job import AutoSubscribe
 from livekit.plugins import (
-    cartesia,
+    cartesia,  # noqa
     deepgram,
     noise_cancellation,
     silero,
@@ -13,17 +13,24 @@ from livekit.plugins import (
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins.openai import LLM
 from typing import Literal
-
+from livekit.plugins import google as google_livekit  # noqa
 from livekit.plugins.google import LLM as GeminiLLM
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
 import pandas as pd
+import google
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-voice-agent")
 
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CREDS_PATH = os.path.join(SCRIPT_DIR, "gc_creds.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDS_PATH
+credentials, project_id = google.auth.default(quota_project_id="mlsprouts")
+os.environ["GOOGLE_CLOUD_PROJECT"] = "mlsprouts"
 
 azure_llm = LLM.with_azure(
     model="gpt-4o",
@@ -174,9 +181,7 @@ async def entrypoint(
 
     # Instruct the agent to speak first
     await session.generate_reply(
-        instructions="greet the user with his/her first name : {}".format(
-            prospect_data["Full Name"]
-        )
+        instructions=f"You are  Chloe, an intelligent AI Agent representing {seller_data['seller_company_name']}, specializing in discovery calls for sales. Start the conversation with an warm greeting and your introduction. The prospect name is {prospect_data['Full Name']}. Use the first name for the greeting"
     )
 
 
@@ -197,7 +202,7 @@ if __name__ == "__main__":
     agents.cli.run_app(
         agents.WorkerOptions(
             entrypoint_fnc=lambda ctx: entrypoint(
-                ctx, prospect_data, seller_data, llm_service="gemini"
+                ctx, prospect_data, seller_data, llm_service="azure-openai"
             ),
         )
     )

@@ -1,0 +1,85 @@
+{
+    "items": [
+        {
+            "id": "item_2835fca063f2",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Hello Sushmita, it's a pleasure to connect with you! My name is Chloe, and I'm an AI agent representing Apollo.io. How are you doing today?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_f51913bc6474",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "I'm good. Thank you for asking."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_04fc510eb83e",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Great to hear, Sushmita. Thank you for taking the time to speak with me today. I believe we have 30 minutes scheduled. Does that timeframe still work for you?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_56747c7addb2",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "Yes. Yes. It does."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_665325c01c5f",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Perfect. My goal today is mainly to learn more about your current processes, challenges, and goals at Salesforce, particularly in areas like sales intelligence and outreach, to see if there might be a potential fit for Apollo.io. If it makes sense, we can discuss any appropriate next steps towards the end. How does that sound to you?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_75bee7b882f8",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "Sounds good. Sounds good, actually."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_6425da45336a",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Wonderful. I noticed that Salesforce has been focusing quite a bit on AI-driven solutions, especially with the launch of Agentforce. Could you tell me a bit more about how your team, as part of product marketing, is approaching these AI initiatives?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_fd47776a7b7d",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "We are trying to build an in house LM framework which will help us in building AI native solutions."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_660bc563d9cd",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "That sounds like an exciting initiative, Sushmita. As the director of product marketing, what are some of the key objectives for your team over the next 6-12 months, especially with this AI focus?"
+            ],
+            "interrupted": false
+        }
+    ]
+}
