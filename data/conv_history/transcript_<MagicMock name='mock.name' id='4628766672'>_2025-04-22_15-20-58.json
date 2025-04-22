@@ -1,0 +1,265 @@
+{
+    "items": [
+        {
+            "id": "item_37c18f2d1c5a",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Hello Lisa!\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_6e6a3a02b896",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "How are you doing?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_839e2f599825",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "I'm doing well, thank you for asking! I appreciate you taking the time to speak with me today, lisa zhong. I believe we have 30 minutes scheduled. Does that timeframe still work for you?\n\nMy goal today is primarily to learn more about your current processes, challenges, and goals at Broadcom, Inc., especially regarding sales intelligence and outreach, to see if there might be a potential fit for Apollo.io. If it makes sense, we can discuss appropriate next steps towards the end. How does that sound?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_c1b0af5cc372",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "Yep. That sounds perfect."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_275b7a060026",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Great! To kick things off, I was taking a look at Broadcom, Inc. and saw that you're a global technology leader focused on semiconductor and infrastructure software solutions. As senior product marketing manager, what are some of the key initiatives on your plate right now?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_89869a067b47",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "So we have multiple initiatives main reason reaching out to Apollo right now is we have a database problem at our end."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_2405ffeeb95c",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_a1abd460b8e7",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "We are looking for a quality data. Currently, we are using ZoomInfo but we are looking for a change in the next couple of months."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_d8929d5f8acf",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Thanks for sharing that, lisa zhong. It's helpful to know that data quality is a priority and that you're evaluating alternatives to ZoomInfo.\n\nWhen you say \"quality data,\" what does that look like for Broadcom, Inc.? What are the most important data points or characteristics you're looking for in a database solution?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_ff5a79df0554",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "So we generally classify our data into three type kind of phases. One is the standard For example, where the company or contact or an account level data comes into the picture. Right? For example, the industry of the company or revenue of the company should be latest. And as well as about the contacts, for example, the contact has switched the company, that should be updated at our end."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_c554c32dc999",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_a154d7f7619f",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "And more on that talking about, you know, second is advanced datasets. For example, where our team currently does our manual research."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_2fa9ca64d2f1",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_81b2ce835859",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "So instead of that, can Apollo help us automate that process where, you know, you can do the research, find something from Google, and create that kind of a signal for us."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_334405e92a2d",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "That's a great breakdown, lisa zhong. Thanks for clarifying the different phases of data you're looking for.\n\nIt sounds like accuracy and up-to-dateness are critical for your standard company and contact data. Could you give me an example of the kind of \"advanced datasets\" your team is currently researching manually? What kind of signals are you trying to identify?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_b6a350b13bf2",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "I'll say when we have to research for signals."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_62be4d4f1125",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_c3d59f1a90fb",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "Online is, for example, as you can think of, we look for companies who recently got funded."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_e7f944e87253",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_55e378cda7a8",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "So generally, we look for this data on Google. Or for example, if I look for any companies who is using AI for their any initiatives, So, you know, like, identifying that kind of signal from Google to get the data. To create our data."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_3df428947714",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Okay, I understand. So, identifying companies based on specific events like recent funding or technology adoption like AI. That makes sense.\n\nCurrently, how much time would you estimate your team spends each week on this manual research to identify these advanced datasets and signals?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_27a23b6e490a",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "We have a team of around 10 SDRs. You'll say around 40% of their time goes into manual researching the data."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_6adfe0998f21",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Okay, so a significant portion of your SDR team's time is dedicated to manual research. To confirm, that's 40% of 10 SDRs time spent weekly.\n\nHow does that time spent impact your team's ability to hit its goals? What would be the ideal outcome if you could automate or streamline that research process?\n"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_50c09384437d",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "I'd say of course, we'll get more time to do the prospecting or do the outreach."
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_bef103773c8a",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_991b2d0aaf1d",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "Instead of full face spending most of the time doing the research of the research part is already automated, then the SDS can focus more on doing the updates"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_6363bdb0b283",
+            "type": "message",
+            "role": "user",
+            "content": [
+                "instead of just doing the research on Google. Right?"
+            ],
+            "interrupted": false
+        },
+        {
+            "id": "item_ac7bf79c5890",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                ""
+            ],
+            "interrupted": true
+        },
+        {
+            "id": "item_acfdcda4279d",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "That makes perfect sense. Freeing up your SDRs to focus on outreach and engagement rather than spending so much time on manual research.\n\nSo, if I'm hearing you correctly, the main issue is the amount of time your SDRs are spending on manual data research, and it's impacting their ability to focus on core prospecting and outreach activities. Is that right?\n"
+            ],
+            "interrupted": false
+        }
+    ]
+}

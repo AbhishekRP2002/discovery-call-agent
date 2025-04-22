@@ -129,6 +129,7 @@ async def entrypoint(
 ):
     logger.info(f"connecting to room {ctx.room.name}")
 
+    # TODO: update this later to store in a db from where i can fetch later for post processing analysis
     async def write_transcript():
         curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         file_name = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}.json"

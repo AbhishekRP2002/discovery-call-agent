@@ -1,0 +1,13 @@
+{
+    "items": [
+        {
+            "id": "item_c82cd5c70f8f",
+            "type": "message",
+            "role": "assistant",
+            "content": [
+                "Hello Lisa! How can I help you today?\n"
+            ],
+            "interrupted": false
+        }
+    ]
+}

@@ -34,6 +34,6 @@ Notes from other blog posts on building effective voice agents:
 - implement dynamic prompt injection and real-time data integration support
 
 - ** coming the response . TTS conversation
-- company registered name is used, directly like "broadcom Inc" instead of "broadcom", have t apply some filtering / input account name
+- company registered name is used, directly like "broadcom Inc" instead of "broadcom", have to apply some filtering / input account name
   sanitization
   - close the room after the end of the conversation.
