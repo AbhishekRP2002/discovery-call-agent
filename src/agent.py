@@ -148,6 +148,11 @@ class DiscoveryCallAgent(Agent):
     def __init__(self, system_prompt: str = None):
         super().__init__(instructions=system_prompt)
 
+    async def on_enter(self):
+        self.session.generate_reply(
+            instructions="Greet the user with a warm welcome",
+        )
+
     @function_tool
     async def end_call(self):
         """
@@ -156,7 +161,7 @@ class DiscoveryCallAgent(Agent):
         await self.session.say("Thank you for your time, have a wonderful day.")
         job_ctx = get_job_context()
         await job_ctx.api.room.delete_room(
-            api.DeleteRoomRequest(room=job_ctx.room.name)
+            api.DeleteRoomRequest(room=str(job_ctx.room.name))
         )
 
 
@@ -235,11 +240,6 @@ async def entrypoint(
             # included at no additional cost with LiveKit Cloud
             noise_cancellation=noise_cancellation.BVC(),
         ),
-    )
-
-    # Instruct the agent to speak first
-    await session.generate_reply(
-        instructions=f"You are  Chloe, an intelligent AI Agent representing {seller_data['seller_company_name']}, specializing in discovery calls for sales. Start the conversation with an warm greeting and your introduction. The prospect name is {prospect_data['Full Name']}. Use the first name for the greeting"
     )
 
 
