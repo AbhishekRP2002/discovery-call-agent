@@ -9,20 +9,31 @@ from livekit.plugins import (
     deepgram,
     noise_cancellation,
     silero,
+    assemblyai,
+    groq,
+    elevenlabs,
 )
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins.openai import LLM
 from typing import Literal
 from livekit.plugins import google as google_livekit  # noqa
-from livekit.agents import metrics, MetricsCollectedEvent
+from livekit.agents import (
+    metrics,
+    MetricsCollectedEvent,
+    function_tool,
+    get_job_context,
+)
+from livekit.agents import llm, stt, tts  # noqa
+from livekit import api
 from livekit.plugins.google import LLM as GeminiLLM
+from livekit.agents.voice.events import CloseEvent, ErrorEvent  # noqa
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
 import pandas as pd
 import google
-from src.utils import sanitize_company_name
+from utils import sanitize_company_name
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-discovery-call-voice-agent")
@@ -113,6 +124,7 @@ def format_sys_prompt_template(
     system_prompt, prospect_data, seller_data, scheduled_duration=30
 ):
     current_date_time = datetime.now().strftime("%Y-%m-%d")
+    # TODO: update the arg of sanitize_company_name to list[str] to reduce code redundancy while method invoking
     seller_acc_name = sanitize_company_name(seller_data["seller_company_name"])
     prospect_acc_name = sanitize_company_name(prospect_data["Account Name"])
     updated_system_prompt = system_prompt.format(
@@ -135,6 +147,17 @@ def format_sys_prompt_template(
 class DiscoveryCallAgent(Agent):
     def __init__(self, system_prompt: str = None):
         super().__init__(instructions=system_prompt)
+
+    @function_tool
+    async def end_call(self):
+        """
+        use this tool to end the call after the conversation is done between the agent and the participant
+        """
+        await self.session.say("Thank you for your time, have a wonderful day.")
+        job_ctx = get_job_context()
+        await job_ctx.api.room.delete_room(
+            api.DeleteRoomRequest(room=job_ctx.room.name)
+        )
 
 
 async def entrypoint(
@@ -166,10 +189,24 @@ async def entrypoint(
 
     session = AgentSession(
         vad=silero.VAD.load(),
-        stt=deepgram.STT(),
-        # stt=assemblyai.STT(),
+        stt=stt.FallbackAdapter(
+            [
+                deepgram.STT(),
+                assemblyai.STT(api_key=os.getenv("ASSEMBLYAI_API_KEY")),
+            ]
+        ),
         llm=azure_llm if llm_service == "azure-openai" else gemini_llm,
-        tts=cartesia.TTS(),
+        tts=tts.FallbackAdapter(
+            [
+                # cartesia.TTS(),
+                elevenlabs.TTS(api_key=os.getenv("ELEVEN_API_KEY")),
+                groq.TTS(
+                    api_key=os.getenv("GROQ_API_KEY"),
+                    model="playai-tts",
+                    voice="Arista-PlayAI",
+                ),
+            ]
+        ),
         # use LiveKit's transformer-based turn detector
         turn_detection=EnglishModel(),
         # minimum delay for endpointing, used when turn detector believes the user is done with their turn

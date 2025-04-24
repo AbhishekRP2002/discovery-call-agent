@@ -43,4 +43,6 @@ TODO:
 - close the session after the conversation ends
 - feature:
   - implement post processing analytics
-- sanitize the account name, do not use official account name suffixes like inc, pvt. ltd etc
+- sanitize the account name, do not use official account name suffixes like inc, pvt. ltd etc - DONE
+- https://docs.livekit.io/agents/build/events/ : add fallbacks for stt, tts, llm service providers
+- 
