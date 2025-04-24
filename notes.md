@@ -45,4 +45,4 @@ TODO:
   - implement post processing analytics
 - sanitize the account name, do not use official account name suffixes like inc, pvt. ltd etc - DONE
 - https://docs.livekit.io/agents/build/events/ : add fallbacks for stt, tts, llm service providers
-- 
+- vertex-ai anthropic not working , anthropic native - Not working --> need to take a look at this

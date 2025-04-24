@@ -26,7 +26,7 @@ from livekit.agents import (
 from livekit.agents import llm, stt, tts  # noqa
 from livekit import api
 from livekit.plugins.anthropic import LLM as AnthropicLLM
-from livekit.plugins.google import LLM as GeminiLLM
+from livekit.plugins.google import LLM as GoogleVertexAIGeminiLLM
 from livekit.agents.voice.events import CloseEvent, ErrorEvent  # noqa
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
@@ -60,7 +60,7 @@ azure_llm = LLM.with_azure(
     api_version="2024-12-01-preview",
 )
 
-gemini_llm = GeminiLLM(
+gemini_llm = GoogleVertexAIGeminiLLM(
     model="gemini-2.0-flash-001",
     api_key=os.getenv("GEMINI_API_KEY"),
     # base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
@@ -74,11 +74,21 @@ claude_llm = AnthropicLLM(
     temperature=0.2,
 )
 
+
+vertex_anthropic_llm = GoogleVertexAIGeminiLLM(
+    model="claude-3-5-sonnet@20240620",
+    temperature=0.2,
+    project="mlsprouts",
+    location="us-east5",
+    vertexai=True,
+)
+
+
 llm_service_map = {
     "azure-openai": azure_llm,
     "gemini": gemini_llm,
     "anthropic": claude_llm,
-    "vertexai-anthropic": None,
+    "vertexai-anthropic": vertex_anthropic_llm,
     "openai": None,
 }
 
