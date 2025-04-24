@@ -150,6 +150,30 @@ files = [
 ]
 
 [[package]]
+name = "anthropic"
+version = "0.50.0"
+description = "The official Python library for the anthropic API"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "anthropic-0.50.0-py3-none-any.whl", hash = "sha256:defbd79327ca2fa61fd7b9eb2f1627dfb1f69c25d49288c52e167ddb84574f80"},
+    {file = "anthropic-0.50.0.tar.gz", hash = "sha256:42175ec04ce4ff2fa37cd436710206aadff546ee99d70d974699f59b49adc66f"},
+]
+
+[package.dependencies]
+anyio = ">=3.5.0,<5"
+distro = ">=1.7.0,<2"
+httpx = ">=0.25.0,<1"
+jiter = ">=0.4.0,<1"
+pydantic = ">=1.9.0,<3"
+sniffio = "*"
+typing-extensions = ">=4.10,<5"
+
+[package.extras]
+bedrock = ["boto3 (>=1.28.57)", "botocore (>=1.31.57)"]
+vertex = ["google-auth[requests] (>=2,<3)"]
+
+[[package]]
 name = "anyio"
 version = "4.9.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -1418,6 +1442,7 @@ docstring-parser = ">=0.16"
 eval-type-backport = "*"
 livekit = ">=1.0.6,<2"
 livekit-api = ">=1.0.2,<2"
+livekit-plugins-anthropic = {version = ">=1.0.16", optional = true, markers = "extra == \"anthropic\""}
 livekit-plugins-assemblyai = {version = ">=1.0.16", optional = true, markers = "extra == \"assemblyai\""}
 livekit-plugins-cartesia = {version = ">=1.0.16", optional = true, markers = "extra == \"cartesia\""}
 livekit-plugins-deepgram = {version = ">=1.0.16", optional = true, markers = "extra == \"deepgram\""}
@@ -1485,6 +1510,21 @@ livekit-protocol = ">=1.0,<2.0"
 protobuf = ">=4"
 pyjwt = ">=2.0.0"
 types-protobuf = ">=4"
+
+[[package]]
+name = "livekit-plugins-anthropic"
+version = "1.0.16"
+description = "Agent Framework plugin for services from Anthropic"
+optional = false
+python-versions = ">=3.9.0"
+files = [
+    {file = "livekit_plugins_anthropic-1.0.16-py3-none-any.whl", hash = "sha256:903a9c8e710dcc44215b92534ecb11863ae6bbde8376a99576d38d88d2abe5c4"},
+    {file = "livekit_plugins_anthropic-1.0.16.tar.gz", hash = "sha256:513a3a7b324e4c94b71755ba214a877213274ca2be75a6c0c2431f44be7af8b4"},
+]
+
+[package.dependencies]
+anthropic = ">=0.34"
+livekit-agents = ">=1.0.16"
 
 [[package]]
 name = "livekit-plugins-assemblyai"
@@ -3866,4 +3906,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "466d8630c4a6502255cc1cf6e0575788f0eec8dfdc46c55b68a93bb9407ac592"
+content-hash = "19a152794da1c3fab25bc420851e4676ae665d8db70999a61834bb676dfcaaf2"

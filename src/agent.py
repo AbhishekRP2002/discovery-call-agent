@@ -25,6 +25,7 @@ from livekit.agents import (
 )
 from livekit.agents import llm, stt, tts  # noqa
 from livekit import api
+from livekit.plugins.anthropic import LLM as AnthropicLLM
 from livekit.plugins.google import LLM as GeminiLLM
 from livekit.agents.voice.events import CloseEvent, ErrorEvent  # noqa
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
@@ -66,6 +67,20 @@ gemini_llm = GeminiLLM(
     temperature=0.2,
     tool_choice="auto",
 )
+
+claude_llm = AnthropicLLM(
+    model="claude-3-5-sonnet-20241022",
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
+    temperature=0.2,
+)
+
+llm_service_map = {
+    "azure-openai": azure_llm,
+    "gemini": gemini_llm,
+    "anthropic": claude_llm,
+    "vertexai-anthropic": None,
+    "openai": None,
+}
 
 
 class UserInfo(BaseModel):
@@ -169,7 +184,9 @@ async def entrypoint(
     ctx: agents.JobContext,
     prospect_data: dict,
     seller_data: dict,
-    llm_service: Literal["azure-openai", "gemini"],
+    llm_service: Literal[
+        "azure-openai", "gemini", "anthropic", "openai", "vertexai-anthropic"
+    ] = "azure-openai",
 ):
     logger.info(f"connecting to room {ctx.room.name}")
 
@@ -200,7 +217,7 @@ async def entrypoint(
                 assemblyai.STT(api_key=os.getenv("ASSEMBLYAI_API_KEY")),
             ]
         ),
-        llm=azure_llm if llm_service == "azure-openai" else gemini_llm,
+        llm=llm.FallbackAdapter([llm_service_map[llm_service], gemini_llm]),
         tts=tts.FallbackAdapter(
             [
                 # cartesia.TTS(),
