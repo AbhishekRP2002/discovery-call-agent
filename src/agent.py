@@ -22,6 +22,7 @@ from datetime import datetime
 import json
 import pandas as pd
 import google
+from src.utils import sanitize_company_name
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-discovery-call-voice-agent")
@@ -112,16 +113,17 @@ def format_sys_prompt_template(
     system_prompt, prospect_data, seller_data, scheduled_duration=30
 ):
     current_date_time = datetime.now().strftime("%Y-%m-%d")
-
+    seller_acc_name = sanitize_company_name(seller_data["seller_company_name"])
+    prospect_acc_name = sanitize_company_name(prospect_data["Account Name"])
     updated_system_prompt = system_prompt.format(
-        seller_company_name=seller_data["seller_company_name"],
+        seller_company_name=seller_acc_name,
         seller_domain_knowledge=seller_data["seller_domain_knowledge"],
         seller_product_knowledge=seller_data["seller_product_knowledge"],
         seller_success_stories=seller_data["seller_success_stories"],
         scheduled_duration=scheduled_duration,
         current_date_time=current_date_time,
         prospect_name=prospect_data["Full Name"],
-        prospect_company_name=prospect_data["Account Name"],
+        prospect_company_name=prospect_acc_name,
         prospect_role=prospect_data["Job Title"],
         prospect_linkedin_url=prospect_data["Contact LinkedIn URL"],
         prospect_company_description=prospect_data["Company Description"],
