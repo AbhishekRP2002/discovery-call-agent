@@ -229,6 +229,11 @@ async def entrypoint(
         seller_data=seller_data,
     )
 
+    ctx.log_context_fields = {
+        "room_name": ctx.room.name,
+        "user_id": "test-user",
+    }
+
     session = AgentSession(
         vad=silero.VAD.load(),
         stt=stt.FallbackAdapter(
