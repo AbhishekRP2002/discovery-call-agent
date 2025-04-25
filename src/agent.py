@@ -23,16 +23,15 @@ from livekit.agents import (
     function_tool,
     get_job_context,
 )
-from livekit.agents import llm, stt, tts  # noqa
-from livekit import api
+from livekit.agents import llm, stt, tts
 from livekit.plugins.anthropic import LLM as AnthropicLLM
 from livekit.plugins.google import LLM as GoogleVertexAIGeminiLLM
-from livekit.agents.voice.events import CloseEvent, ErrorEvent  # noqa
 from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
 import pandas as pd
+import asyncio
 import google
 from utils import sanitize_company_name
 
@@ -83,13 +82,15 @@ vertex_anthropic_llm = GoogleVertexAIGeminiLLM(
     vertexai=True,
 )
 
+openai_llm = LLM(model="gpt-4.1", api_key=os.getenv("OPENAI_API_KEY"), temperature=0.2)
+
 
 llm_service_map = {
     "azure-openai": azure_llm,
     "gemini": gemini_llm,
     "anthropic": claude_llm,
     "vertexai-anthropic": vertex_anthropic_llm,
-    "openai": None,
+    "openai": openai_llm,
 }
 
 
@@ -169,6 +170,15 @@ def format_sys_prompt_template(
     return updated_system_prompt
 
 
+async def hangup_call():
+    ctx = get_job_context()
+    if ctx is None:
+        # Not running in a job context
+        return
+
+    await ctx.delete_room()
+
+
 class DiscoveryCallAgent(Agent):
     def __init__(self, system_prompt: str = None):
         super().__init__(instructions=system_prompt)
@@ -179,15 +189,15 @@ class DiscoveryCallAgent(Agent):
         )
 
     @function_tool
-    async def end_call(self):
-        """
-        use this tool to end the call after the conversation is done between the agent and the participant
-        """
-        await self.session.say("Thank you for your time, have a wonderful day.")
-        job_ctx = get_job_context()
-        await job_ctx.api.room.delete_room(
-            api.DeleteRoomRequest(room=str(job_ctx.room.name))
+    async def end_call(self) -> None:
+        """Called when the user asks to end the call or hang up or when the conversation ends. This function will end the conversation and disconnect."""
+        await self.session.generate_reply(
+            instructions="Tell the user you are ending the call."
         )
+        await asyncio.sleep(
+            0.5
+        )  # Add a natural gap to the end of the voicemail message
+        await hangup_call()
 
 
 async def entrypoint(
