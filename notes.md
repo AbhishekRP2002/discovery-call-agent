@@ -46,3 +46,78 @@ TODO:
 - sanitize the account name, do not use official account name suffixes like inc, pvt. ltd etc - DONE
 - https://docs.livekit.io/agents/build/events/ : add fallbacks for stt, tts, llm service providers
 - vertex-ai anthropic not working , anthropic native - Not working --> need to take a look at this
+
+
+
+post processing / post call analysis:
+
+1. Summary of the Call
+What it is:
+- A concise, objective recap of the main topics, questions, and outcomes discussed during the call.
+
+Why it matters:
+
+- Helps both seller and prospect quickly recall what was covered.
+- Useful for sharing with team members or for CRM notes.
+- Ensures alignment on next steps and what was learned.
+
+What it typically includes:
+
+- The prospect’s needs and pain points.
+- Key product features discussed.
+- Any commitments or follow-ups.
+- The overall tone and outcome of the call.
+
+
+2. Insights from the Call
+What it is:
+- Actionable observations, learnings, or patterns identified from the conversation.
+
+Why it matters:
+
+- Surfaces hidden opportunities or risks.
+- Helps sales/CS/product teams refine their approach.
+- Can inform product development or marketing.
+
+What it typically includes:
+
+- New pain points or requirements discovered.
+- Objections or hesitations raised by the prospect.
+- Unique use cases or integration needs.
+- Competitive intelligence (mentions of other vendors).
+- Suggestions for product improvement.
+
+
+3. Buying Intent of the Lead
+What it is:
+- An assessment of how likely the prospect is to purchase, based on their words, questions, and behavior during the call.
+
+Why it matters:
+
+- Helps prioritize follow-up actions and resources.
+- Informs sales forecasting and pipeline management.
+
+What it typically includes:
+
+- Signals of high intent: asking about pricing, implementation, timelines, or next steps.
+- Signals of low intent: vague answers, lack of urgency, or focus on obstacles.
+- A rating (e.g., High/Medium/Low) with supporting evidence from the transcript.
+
+
+In summary:
+
+- Summary = What happened.
+- Insights = What we learned.
+- Buying Intent = How likely they are to buy (and why).
+
+
+
+**post processing tasks**
+- add post processing component as part of shutdown callback
+- store the sample results under data/ dir
+- think about decomposition of tasks or to cater in a single task
+  - need to test this
+- task specific model choice?
+  - summarization of call: cheaper model maybe?
+  - insights: strong model
+  - buying intent: strong model

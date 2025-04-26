@@ -1,6 +1,6 @@
 import logging
 import os
-from livekit import agents
+from livekit import agents, api  # noqa
 from dotenv import load_dotenv
 from livekit.agents.voice import AgentSession, Agent, room_io
 from livekit.agents.job import AutoSubscribe
@@ -13,6 +13,7 @@ from livekit.plugins import (
     groq,
     elevenlabs,
 )
+import uuid
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins.openai import LLM
 from typing import Literal
@@ -34,6 +35,7 @@ import pandas as pd
 import asyncio
 import google
 from utils import sanitize_company_name
+from post_processing import process_call_transcript
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("marklinea-discovery-call-voice-agent")
@@ -208,18 +210,10 @@ async def entrypoint(
         "azure-openai", "gemini", "anthropic", "openai", "vertexai-anthropic"
     ] = "azure-openai",
 ):
+    ctx.room.name = "discovery-call-test-room"
+    session_id = uuid.uuid4().hex[:8]
+    curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     logger.info(f"connecting to room {ctx.room.name}")
-
-    # TODO: update this later to store in a db from where i can fetch later for post processing analysis
-    async def write_transcript():
-        curr_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        file_name = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}.json"
-        with open(file_name, "w") as f:
-            json.dump(session.history.to_dict(), f, indent=4)
-
-        logger.info(f"Transcript for room {ctx.room.name} saved to {file_name}")
-
-    ctx.add_shutdown_callback(write_transcript)
 
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
@@ -272,6 +266,18 @@ async def entrypoint(
         summary = usage_collector.get_summary()
         metrics_logger.info(f"Room name: {ctx.room.name} \n Usage Summary: {summary}")
 
+    async def write_transcript():
+        file_name = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}_{session_id}.json"
+        with open(file_name, "w") as f:
+            json.dump(session.history.to_dict(), f, indent=4)
+
+        logger.info(f"Transcript for room {ctx.room.name} saved to {file_name}")
+
+    async def post_process_transcript():
+        curr_transcript_file_path = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}_{session_id}.json"
+        process_call_transcript(curr_transcript_file_path, prospect_data, seller_data)
+
+    ctx.add_shutdown_callback(write_transcript)
     ctx.add_shutdown_callback(log_usage)
 
     await session.start(
@@ -302,7 +308,8 @@ if __name__ == "__main__":
     agents.cli.run_app(
         agents.WorkerOptions(
             entrypoint_fnc=lambda ctx: entrypoint(
-                ctx, prospect_data, seller_data, llm_service="azure-openai"
+                ctx, prospect_data, seller_data, llm_service="openai"
             ),
+            shutdown_process_timeout=180,
         )
     )
