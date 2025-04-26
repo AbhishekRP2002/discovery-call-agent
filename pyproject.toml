@@ -18,6 +18,7 @@ google-genai = "^1.11.0"
 livekit-agents = {version = ">=1.0,<2.0", extras = ["anthropic", "assemblyai", "cartesia", "deepgram", "elevenlabs", "google", "groq", "openai", "silero", "turn-detector"]}
 livekit-plugins-noise-cancellation = "^0.2.1"
 python-dotenv = "^1.1.0"
+litellm = "^1.67.2"
 
 
 [build-system]

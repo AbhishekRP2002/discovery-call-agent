@@ -274,11 +274,13 @@ async def entrypoint(
         logger.info(f"Transcript for room {ctx.room.name} saved to {file_name}")
 
     async def post_process_transcript():
+        # NOTE: sending file path directly is not a good idea ? need to just send attributes which can identify the file
         curr_transcript_file_path = f"data/conv_history/transcript_{ctx.room.name}_{curr_date}_{session_id}.json"
         process_call_transcript(curr_transcript_file_path, prospect_data, seller_data)
 
     ctx.add_shutdown_callback(write_transcript)
     ctx.add_shutdown_callback(log_usage)
+    ctx.add_shutdown_callback(post_process_transcript)
 
     await session.start(
         room=ctx.room,
