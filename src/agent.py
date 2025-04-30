@@ -12,6 +12,7 @@ from livekit.plugins import (
     assemblyai,
     groq,
     elevenlabs,
+    aws,
 )
 import uuid
 from livekit.plugins.turn_detector.english import EnglishModel
@@ -240,6 +241,11 @@ async def entrypoint(
         tts=tts.FallbackAdapter(
             [
                 # cartesia.TTS(),
+                aws.TTS(
+                    voice="Ruth",
+                    speech_engine="generative",
+                    language="en-US",
+                ),
                 elevenlabs.TTS(api_key=os.getenv("ELEVEN_API_KEY")),
                 groq.TTS(
                     api_key=os.getenv("GROQ_API_KEY"),
