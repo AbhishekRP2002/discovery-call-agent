@@ -28,7 +28,7 @@ from livekit.agents import (
 from livekit.agents import llm, stt, tts
 from livekit.plugins.anthropic import LLM as AnthropicLLM
 from livekit.plugins.google import LLM as GoogleVertexAIGeminiLLM
-from prompts import VOICE_AGENT_SYSTEM_PROMPT_2
+from prompts import VOICE_AGENT_SYSTEM_PROMPT_2, VOICE_AGENT_SYSTEM_PROMPT_1
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
@@ -150,12 +150,16 @@ def get_seller_data():
 
 
 def format_sys_prompt_template(
-    system_prompt, prospect_data, seller_data, scheduled_duration=30
+    system_prompt_template, prospect_data, seller_data, scheduled_duration=30
 ):
     current_date_time = datetime.now().strftime("%Y-%m-%d")
     # TODO: update the arg of sanitize_company_name to list[str] to reduce code redundancy while method invoking
     seller_acc_name = sanitize_company_name(seller_data["seller_company_name"])
     prospect_acc_name = sanitize_company_name(prospect_data["Account Name"])
+    if system_prompt_template == "1":
+        system_prompt = VOICE_AGENT_SYSTEM_PROMPT_1
+    elif system_prompt_template == "2":
+        system_prompt = VOICE_AGENT_SYSTEM_PROMPT_2
     updated_system_prompt = system_prompt.format(
         seller_company_name=seller_acc_name,
         seller_domain_knowledge=seller_data["seller_domain_knowledge"],
@@ -210,6 +214,7 @@ async def entrypoint(
     llm_service: Literal[
         "azure-openai", "gemini", "anthropic", "openai", "vertexai-anthropic"
     ] = "azure-openai",
+    system_prompt_template: Literal["1", "2"] = "2",
 ):
     ctx.room.name = "discovery-call-test-room"
     session_id = uuid.uuid4().hex[:8]
@@ -219,7 +224,7 @@ async def entrypoint(
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
     system_prompt = format_sys_prompt_template(
-        VOICE_AGENT_SYSTEM_PROMPT_2,
+        system_prompt_template,
         prospect_data=prospect_data,
         seller_data=seller_data,
     )
@@ -318,7 +323,11 @@ if __name__ == "__main__":
     agents.cli.run_app(
         agents.WorkerOptions(
             entrypoint_fnc=lambda ctx: entrypoint(
-                ctx, prospect_data, seller_data, llm_service="openai"
+                ctx,
+                prospect_data,
+                seller_data,
+                llm_service="openai",
+                system_prompt_template="1",
             ),
             shutdown_process_timeout=180,
         )
