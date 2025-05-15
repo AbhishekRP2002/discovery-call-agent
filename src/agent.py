@@ -326,7 +326,7 @@ if __name__ == "__main__":
                 ctx,
                 prospect_data,
                 seller_data,
-                llm_service="openai",
+                llm_service="anthropic",
                 system_prompt_template="1",
             ),
             shutdown_process_timeout=180,
